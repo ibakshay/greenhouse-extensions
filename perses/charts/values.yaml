@@ -90,10 +90,6 @@ perses:
   # -- Additional volumes on the output StatefulSet definition.
   volumes: []
 
-  # -- additional values
-  testAdditionalValues:
-    enabled: true
-
   # -- Additional VolumeMounts on the output StatefulSet definition.
   volumeMounts: []
 
@@ -251,4 +247,8 @@ perses:
     imagePullPolicy: IfNotPresent
 greenhouse:
   defaultDashboards:
+    enabled: true
+
+  # -- additional values
+  testAdditionalValues:
     enabled: true
