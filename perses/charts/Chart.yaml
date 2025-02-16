@@ -9,7 +9,7 @@ maintainers:
   - name: richardtief
   - name: ibakshay
 annotations:
-  "helm.sh/validateValues": "false"    
+  "helm.sh/validateValues": "false"
 keywords:
   - monitoring
   - metric
@@ -19,4 +19,3 @@ dependencies:
   - name: perses
     repository: https://perses.github.io/helm-charts
     version: 0.9.0
-
