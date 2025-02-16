@@ -124,6 +124,15 @@ jobs:
           echo "Checking for modified README.md files..."
           git status --short | grep README.md || echo "No README changes detected."
 
+      # Ensure we are on the correct branch before committing
+      - name: Switch to the correct branch
+        run: |
+          echo "Checking current branch..."
+          branch_name="${{ github.head_ref || github.ref_name }}"
+          echo "Current branch is: $branch_name"
+          git checkout $branch_name
+          git pull origin $branch_name  # Ensure it's up to date
+
       # Commit README updates with correct paths
       - name: Commit README changes
         uses: EndBug/add-and-commit@v9
