@@ -8,6 +8,7 @@ appVersion: "v0.50.0"
 maintainers:
   - name: richardtief
   - name: ibakshay
+  - name: Tommy
 annotations:
   "helm.sh/validateValues": "false"
 keywords:
