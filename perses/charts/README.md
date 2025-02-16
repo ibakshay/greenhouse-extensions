@@ -10,6 +10,7 @@ A Helm chart for Perses
 | ---- | ------ | --- |
 | richardtief |  |  |
 | ibakshay |  |  |
+| Tommy |  |  |
 
 ## Requirements
 
