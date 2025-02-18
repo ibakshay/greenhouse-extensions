@@ -248,8 +248,3 @@ perses:
 greenhouse:
   defaultDashboards:
     enabled: true
-
-# -- test hello world
-# hello world values
-helloWorkd:
-  test: true
