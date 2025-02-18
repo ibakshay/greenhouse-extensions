@@ -1,14 +1,14 @@
 name: "Helm lint and tests"
 on:
   pull_request:
-    types: [ opened, synchronize, reopened ]
+    types: [opened, synchronize, reopened]
 
 env:
   REGISTRY: ghcr.io
-  
+
 jobs:
   helm-lint-test:
-    runs-on: [ default ]
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
@@ -80,4 +80,64 @@ jobs:
               body: ':warning: Chart `oci://${{ env.REGISTRY }}/${{ github.repository }}/charts/${{ steps.check-bump.outputs.chart }}:${{ steps.check-bump.outputs.chart_version }}` already exists in OCI registry. Please increment the chart version.'
             })
             core.setFailed(`Action failed with error: Chart version bump required`);
-            
+
+      # Detect changes in Chart.yaml or values.yaml
+      # Debug: List changed files
+      - name: Debug - List changed files
+        run: |
+          echo "Listing changed files:"
+          git diff --name-only origin/${{ github.event.repository.default_branch }}
+
+      # Detect changes in Chart.yaml or values.yaml
+      - name: Check for Chart.yaml or values.yaml changes
+        id: check-doc-changes
+        run: |
+          echo "Checking for changes in Chart.yaml or values.yaml..."
+          changed_charts=$(ct list-changed --config .github/configs/helm-lint.yaml --target-branch ${{ github.event.repository.default_branch }})
+          if [[ -n "$changed_charts" ]]; then
+            echo "Charts that changed: $changed_charts"
+            echo "docs_update_needed=true" >> "$GITHUB_OUTPUT"
+            echo "changed_charts=$changed_charts" >> "$GITHUB_OUTPUT"
+          else
+            echo "No changes detected in Chart.yaml or values.yaml."
+            echo "docs_update_needed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Debug: Output changed charts
+      - name: Debug - Output changed charts
+        run: |
+          echo "docs_update_needed=${{ steps.check-doc-changes.outputs.docs_update_needed }}"
+          echo "changed_charts=${{ steps.check-doc-changes.outputs.changed_charts }}"
+
+      # Generate README.md using helm-docs (Docker version)
+      - name: Generate README.md using helm-docs
+        if: steps.check-doc-changes.outputs.docs_update_needed == 'true'
+        run: |
+          echo "Generating README.md using helm-docs..."
+          docker run --rm --volume "$(pwd):/helm-docs" -u $(id -u) jnorwood/helm-docs:latest
+          echo "README.md generation completed."
+
+      # Debug: Check if README.md files were updated
+      - name: Debug - List updated README.md files
+        if: steps.check-doc-changes.outputs.docs_update_needed == 'true'
+        run: |
+          echo "Checking for modified README.md files..."
+          git status --short | grep README.md || echo "No README changes detected."
+
+      # Ensure we are on the correct branch before committing
+      - name: Switch to the correct branch
+        run: |
+          echo "Checking current branch..."
+          branch_name="${{ github.head_ref || github.ref_name }}"
+          echo "Current branch is: $branch_name"
+          git checkout $branch_name
+          git pull origin $branch_name  # Ensure it's up to date
+
+      # Commit README updates with correct paths
+      - name: Commit README changes
+        uses: EndBug/add-and-commit@v9
+        if: steps.check-doc-changes.outputs.docs_update_needed == 'true'
+        with:
+          message: "docs: update README.md based on changes in Chart.yaml or values.yaml"
+          add: ${{ steps.check-doc-changes.outputs.changed_charts }}/README.md
+          push: true
