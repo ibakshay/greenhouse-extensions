@@ -249,6 +249,7 @@ greenhouse:
   defaultDashboards:
     enabled: true
 
-  # -- additional values
-  testAdditionalValues:
-    enabled: true
+# -- test hello world
+# hello world values
+helloWorkd:
+  test: true
