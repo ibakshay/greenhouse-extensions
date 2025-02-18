@@ -58,7 +58,6 @@ A guide on how to create custom dashboards on the UI can be found [here](#create
 |-----|------|---------|-------------|
 | global.commonLabels | object | `{}` |  |
 | greenhouse.defaultDashboards.enabled | bool | `true` |  |
-| helloWorkd | object | `{"test":true}` | test hello world hello world values |
 | perses.additionalLabels | object | `{}` |  |
 | perses.annotations | object | `{}` | Statefulset Annotations |
 | perses.config | object | `{"annotations":{},"api_prefix":"/perses","database":{"file":{"extension":"json","folder":"/perses"}},"frontend":{"important_dashboards":[]},"provisioning":{"folders":["/etc/perses/provisioning"],"interval":"10s"},"schemas":{"datasources_path":"/etc/perses/cue/schemas/datasources","interval":"5m","panels_path":"/etc/perses/cue/schemas/panels","queries_path":"/etc/perses/cue/schemas/queries","variables_path":"/etc/perses/cue/schemas/variables"},"security":{"cookie":{"same_site":"lax","secure":false},"enable_auth":false,"readonly":false}}` | Perses configuration file ref: https://github.com/perses/perses/blob/main/docs/user-guides/configuration.md |
